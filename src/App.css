@@ -5,9 +5,10 @@
 body {
   margin: 0;
   background-color: #efefef;
+  font-family: 'Fredoka One', sans-serif;
 }
 
-main {
+.app {
   text-align: center;
   vertical-align: center;
   line-height: 100vh
