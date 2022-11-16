@@ -12,3 +12,23 @@
   line-height: 5rem;
   margin: 0.5rem;
 } 
+
+.x {
+  color: rgb(255, 70, 37)
+}
+
+.o {
+  color: rgb(44, 135, 255)
+}
+
+.box:hover {
+  box-shadow: 0px 0px 15px #888;
+}
+
+.winnerline {
+  box-shadow: 0 0 30px rgb(255, 0, 255);
+}
+
+.winnerline:hover {
+  box-shadow: 0 0 45px rgb(255, 0, 255);
+}

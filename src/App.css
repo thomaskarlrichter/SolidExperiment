@@ -11,5 +11,5 @@ body {
 .app {
   text-align: center;
   vertical-align: center;
-  line-height: 100vh
+  margin: 0 auto;
 }
