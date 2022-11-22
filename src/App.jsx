@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import './App.css'
-import { Board } from "./components/Board"
-import { ScoreBoard } from "./components/ScoreBoard"
-import { ResetButton } from "./components/ResetButton"
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import { Board } from "./components/Board";
+import { ScoreBoard } from "./components/ScoreBoard";
+import { ResetButton } from "./components/ResetButton";
+import { Profile } from "./components/Profile";
+import { LoginForm } from "./components/LoginForm";
+import { SessionProvider, useSession, LogoutButton } from "@inrupt/solid-ui-react";
 
 export default function App() {
   const WIN_CONDITIONS = [
@@ -37,9 +40,9 @@ export default function App() {
     if (winner?.player) {
       let myboxClasses = boxClasses.slice();
       for (let i = 0; i < boxClasses.length; i++) {
-        if(i === winner.line[0]) myboxClasses[i] += " winnerline";
-        if(i === winner.line[1]) myboxClasses[i] += " winnerline";
-        if(i === winner.line[2]) myboxClasses[i] += " winnerline";
+        if (i === winner.line[0]) myboxClasses[i] += " winnerline";
+        if (i === winner.line[1]) myboxClasses[i] += " winnerline";
+        if (i === winner.line[2]) myboxClasses[i] += " winnerline";
       }
       setBoxClasses(myboxClasses);
       if (winner?.player === "O") {
@@ -74,17 +77,41 @@ export default function App() {
     setBoard(Array(9).fill({ value: null }));
     setBoxClasses(Array(9).fill("box"));
   }
+  const { session, sessionRequestInProgress } = useSession();
 
   return (
     <div className="app">
+      <SessionProvider sessionId="log-in-example">
+        {console.log(JSON.stringify(sessionRequestInProgress, null, 2))}
+        {!sessionRequestInProgress && session.info.isLoggedIn && (
+          <LogoutButton
+            onError={console.error}
+            onLogout={() => window.location.reload()}
+          >
+            <div className="logout-button">
+              Log Out
+            </div>
+          </LogoutButton>
+        )}
+
+        {sessionRequestInProgress && !session.info.isLoggedIn && <LoginForm />}
+        {session.info.isLoggedIn && <Profile />}
+      </SessionProvider>
+
+      <hr />
       <ScoreBoard scores={scores} xPlaying={xPlaying} />
       <Board board={board} boxClasses={boxClasses} onClick={gameOver ? () => resetBoard(false) : handleBoxClick} />
-      <ResetButton resetBoard={() => resetBoard(false)} text="Reset Game" />
+      {
+        gameOver ?
+          (<ResetButton resetBoard={() => resetBoard(false)} text="Reset Game" />) :
+          <div>game läuft</div>
+      }
+
       <ResetButton resetBoard={() => resetBoard(true)} text="Reset ScoreBoard" />
 
       <div>
         <a href="https://youtu.be/c8dXnuVwmA8" target="_blank">Tutorial auf Youtube</a>
       </div>
-    </div>
+    </div >
   )
 }
