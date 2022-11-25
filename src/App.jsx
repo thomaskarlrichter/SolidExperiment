@@ -5,7 +5,7 @@ import { ScoreBoard } from "./components/ScoreBoard";
 import { ResetButton } from "./components/ResetButton";
 import { Profile } from "./components/Profile";
 import { LoginForm } from "./components/LoginForm";
-import { SessionProvider, useSession, LogoutButton } from "@inrupt/solid-ui-react";
+import { useSession, LogoutButton } from "@inrupt/solid-ui-react";
 
 export default function App() {
   const WIN_CONDITIONS = [
@@ -23,6 +23,7 @@ export default function App() {
   const [xPlaying, setXPlaying] = useState(true);
   const [scores, setScores] = useState({ xScore: 0, oScore: 0 });
   const [gameOver, setGameOver] = useState(false);
+  const [help, setHelp] = useState(false);
 
   const handleBoxClick = (boxIdx) => {
     let winner;
@@ -81,37 +82,26 @@ export default function App() {
 
   return (
     <div className="app">
-      <SessionProvider sessionId="log-in-example">
-        {console.log(JSON.stringify(sessionRequestInProgress, null, 2))}
-        {!sessionRequestInProgress && session.info.isLoggedIn && (
-          <LogoutButton
-            onError={console.error}
-            onLogout={() => window.location.reload()}
-          >
-            <div className="logout-button">
-              Log Out
-            </div>
-          </LogoutButton>
-        )}
-
-        {sessionRequestInProgress && !session.info.isLoggedIn && <LoginForm />}
-        {session.info.isLoggedIn && <Profile />}
-      </SessionProvider>
-
-      <hr />
-      <ScoreBoard scores={scores} xPlaying={xPlaying} />
-      <Board board={board} boxClasses={boxClasses} onClick={gameOver ? () => resetBoard(false) : handleBoxClick} />
-      {
-        gameOver ?
-          (<ResetButton resetBoard={() => resetBoard(false)} text="Reset Game" />) :
-          <div>game läuft</div>
-      }
-
-      <ResetButton resetBoard={() => resetBoard(true)} text="Reset ScoreBoard" />
-
-      <div>
-        <a href="https://youtu.be/c8dXnuVwmA8" target="_blank">Tutorial auf Youtube</a>
-      </div>
+      {session.info.isLoggedIn ? (<div>
+        <LogoutButton onLogout={(e) => { setHelp(!help); onsole.log("cookie will be removed"); console.log("cookie: ", document.cookie) }}>
+          <div className="logoutbutton">
+            Log Out
+          </div>
+        </LogoutButton>
+        <Profile />
+        <hr />
+        <ScoreBoard scores={scores} xPlaying={xPlaying} />
+        <Board board={board} boxClasses={boxClasses} onClick={gameOver ? () => resetBoard(false) : handleBoxClick} />
+        {
+          gameOver ?
+            (<ResetButton resetBoard={() => resetBoard(false)} text="Reset Game" />) :
+            <div>game läuft</div>
+        }
+        <ResetButton resetBoard={() => resetBoard(true)} text="Reset ScoreBoard" />
+      </div>) : (<>
+        <LoginForm />
+      </>
+      )}
     </div >
   )
 }
